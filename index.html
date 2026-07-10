@@ -1573,14 +1573,19 @@
             currentTime = targetTime;
           } else {
             // Easing logic: smoothly slide currentTime to targetTime
-            currentTime += (targetTime - currentTime) * 0.08;
+            if (Math.abs(targetTime - currentTime) < 0.005) {
+              currentTime = targetTime;
+            } else {
+              currentTime += (targetTime - currentTime) * 0.08;
+            }
           }
           
           // Control background opacity based on wrapper visibility
           if (rect.top < window.innerHeight && rect.bottom > 0) {
             if (bgContainer) bgContainer.style.opacity = '1';
             
-            if (!isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.01) {
+            // Only seek if the video is ready (readyState >= 2) and the scroll position has actually changed
+            if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.02) {
               heroVideo.currentTime = currentTime;
             }
           } else {
