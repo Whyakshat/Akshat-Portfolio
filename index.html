@@ -1594,14 +1594,10 @@
     // Start loop on loadedmetadata
     heroVideo.addEventListener('loadedmetadata', smoothVideoSync);
 
-    // Defer loading the video until after the page is loaded
+    // Defer loading the video until after the page is loaded (using high-quality 720p version on all screen sizes)
     const initVideoLoad = () => {
       heroVideo.preload = 'auto';
-      if (window.innerWidth > 768) {
-        heroVideo.src = 'images/hero-motion.mp4';
-      } else {
-        heroVideo.src = 'images/hero-motion-mobile.mp4';
-      }
+      heroVideo.src = 'images/hero-motion.mp4';
       heroVideo.load();
       if (heroVideo.readyState >= 1) smoothVideoSync();
     };
