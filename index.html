@@ -1555,6 +1555,8 @@
   if (heroVideo) {
     let targetTime = 0;
     let currentTime = 0;
+    let lastSeekTime = 0;
+    const seekThrottleMs = 40; // Limit seeks to maximum 25 per second (every 40ms) to prevent decoder lag
 
     function smoothVideoSync() {
       const wrapper = document.querySelector('.hero-about-wrapper');
@@ -1572,11 +1574,11 @@
           if (isNaN(currentTime)) {
             currentTime = targetTime;
           } else {
-            // Easing logic: smoothly slide currentTime to targetTime
+            // Easing logic: smoothly slide currentTime to targetTime (snappier transition)
             if (Math.abs(targetTime - currentTime) < 0.005) {
               currentTime = targetTime;
             } else {
-              currentTime += (targetTime - currentTime) * 0.08;
+              currentTime += (targetTime - currentTime) * 0.15;
             }
           }
           
@@ -1584,9 +1586,13 @@
           if (rect.top < window.innerHeight && rect.bottom > 0) {
             if (bgContainer) bgContainer.style.opacity = '1';
             
-            // Only seek if the video is ready (readyState >= 2), is not currently seeking, and the scroll position has changed
-            if (heroVideo.readyState >= 2 && !heroVideo.seeking && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
-              heroVideo.currentTime = currentTime;
+            const now = performance.now();
+            // Seek only when ready, not currently seeking, and throttle to 40ms intervals
+            if (now - lastSeekTime > seekThrottleMs) {
+              if (heroVideo.readyState >= 2 && !heroVideo.seeking && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
+                heroVideo.currentTime = currentTime;
+                lastSeekTime = now;
+              }
             }
           } else {
             if (bgContainer) bgContainer.style.opacity = '0';
