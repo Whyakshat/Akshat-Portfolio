@@ -913,7 +913,7 @@
 <!-- HERO & ABOUT WRAPPER -->
 <div class="hero-about-wrapper">
   <div class="hero-bg-container">
-    <video id="hero-video" class="hero-bg-video" src="images/hero-motion.mp4" preload="auto" playsinline muted loop></video>
+    <video id="hero-video" class="hero-bg-video" preload="none" playsinline muted loop></video>
     <div class="hero-bg-overlay"></div>
   </div>
 
@@ -1604,7 +1604,24 @@
 
     // Start loop on loadedmetadata
     heroVideo.addEventListener('loadedmetadata', smoothVideoSync);
-    if (heroVideo.readyState >= 1) smoothVideoSync();
+
+    // Load video dynamically based on screen size (non-blocking)
+    const initVideoLoad = () => {
+      heroVideo.preload = 'auto';
+      if (window.innerWidth > 768) {
+        heroVideo.src = 'images/hero-motion.mp4';
+      } else {
+        heroVideo.src = 'images/hero-motion-mobile.mp4';
+      }
+      heroVideo.load();
+      if (heroVideo.readyState >= 1) smoothVideoSync();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initVideoLoad);
+    } else {
+      initVideoLoad();
+    }
   }
 
   // ── 8. CONTACT CANVAS ANIMATION (Neon Quantum Waves) ──
