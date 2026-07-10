@@ -1512,6 +1512,7 @@
     // Defer loading the video until after the page is loaded, and only on screen sizes > 768px (Desktop)
     const initVideoLoad = () => {
       if (window.innerWidth > 768) {
+        heroVideo.preload = 'auto';
         heroVideo.src = 'images/hero-motion.mp4';
         heroVideo.load();
         if (heroVideo.readyState >= 1) smoothVideoSync();
