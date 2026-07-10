@@ -1556,7 +1556,7 @@
     let targetTime = 0;
     let currentTime = 0;
     let lastSeekTime = 0;
-    const seekThrottleMs = 40; // Limit seeks to maximum 25 per second (every 40ms) to prevent decoder lag
+    const seekThrottleMs = 60; // Limit seeks to maximum 16 per second (every 60ms) to ensure smooth scroll decoding
 
     function smoothVideoSync() {
       const wrapper = document.querySelector('.hero-about-wrapper');
@@ -1575,10 +1575,10 @@
             currentTime = targetTime;
           } else {
             // Easing logic: smoothly slide currentTime to targetTime (snappier transition)
-            if (Math.abs(targetTime - currentTime) < 0.005) {
+            if (Math.abs(targetTime - currentTime) < 0.02) {
               currentTime = targetTime;
             } else {
-              currentTime += (targetTime - currentTime) * 0.15;
+              currentTime += (targetTime - currentTime) * 0.25;
             }
           }
           
@@ -1589,7 +1589,7 @@
             const now = performance.now();
             // Throttle seeks using lastSeekTime to prevent decoder overload (Safari-safe, avoiding the buggy seeking flag)
             if (now - lastSeekTime > seekThrottleMs) {
-              if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
+              if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.06) {
                 heroVideo.currentTime = currentTime;
                 lastSeekTime = now;
               }
