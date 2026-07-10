@@ -1587,9 +1587,9 @@
             if (bgContainer) bgContainer.style.opacity = '1';
             
             const now = performance.now();
-            // Seek only when ready, not currently seeking, and throttle to 40ms intervals
+            // Throttle seeks using lastSeekTime to prevent decoder overload (Safari-safe, avoiding the buggy seeking flag)
             if (now - lastSeekTime > seekThrottleMs) {
-              if (heroVideo.readyState >= 2 && !heroVideo.seeking && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
+              if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
                 heroVideo.currentTime = currentTime;
                 lastSeekTime = now;
               }
