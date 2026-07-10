@@ -1584,8 +1584,8 @@
           if (rect.top < window.innerHeight && rect.bottom > 0) {
             if (bgContainer) bgContainer.style.opacity = '1';
             
-            // Only seek if the video is ready (readyState >= 2) and the scroll position has actually changed
-            if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.02) {
+            // Only seek if the video is ready (readyState >= 2), is not currently seeking, and the scroll position has changed
+            if (heroVideo.readyState >= 2 && !heroVideo.seeking && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.03) {
               heroVideo.currentTime = currentTime;
             }
           } else {
