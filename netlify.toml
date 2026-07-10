@@ -1,0 +1,12 @@
+# Netlify Configuration File
+# Optimizes caching headers for static assets to reduce bandwidth and speed up page loading.
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
