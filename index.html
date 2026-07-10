@@ -1588,8 +1588,12 @@
             
             const now = performance.now();
             // Throttle seeks using lastSeekTime to prevent decoder overload (Safari-safe, avoiding the buggy seeking flag)
+            const isSettled = (currentTime === targetTime);
+            const timeDiff = Math.abs(currentTime - heroVideo.currentTime);
+            
             if (now - lastSeekTime > seekThrottleMs) {
-              if (heroVideo.readyState >= 2 && !isNaN(currentTime) && Math.abs(currentTime - heroVideo.currentTime) > 0.06) {
+              // Seek if change is significant (> 0.06s) OR if we have fully settled and need a final perfect frame alignment
+              if (heroVideo.readyState >= 2 && !isNaN(currentTime) && (timeDiff > 0.06 || (isSettled && timeDiff > 0.005))) {
                 heroVideo.currentTime = currentTime;
                 lastSeekTime = now;
               }
@@ -1605,14 +1609,10 @@
     // Start loop on loadedmetadata
     heroVideo.addEventListener('loadedmetadata', smoothVideoSync);
 
-    // Load video dynamically based on screen size (non-blocking)
+    // Load video dynamically (non-blocking, using high-quality 720p version on all screens)
     const initVideoLoad = () => {
       heroVideo.preload = 'auto';
-      if (window.innerWidth > 768) {
-        heroVideo.src = 'images/hero-motion.mp4';
-      } else {
-        heroVideo.src = 'images/hero-motion-mobile.mp4';
-      }
+      heroVideo.src = 'images/hero-motion.mp4';
       heroVideo.load();
       if (heroVideo.readyState >= 1) smoothVideoSync();
     };
