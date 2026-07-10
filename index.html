@@ -1264,8 +1264,9 @@
     }
   });
 
-  // DevTools detection loop (disabled if URL has ?debug=true)
-  if (!window.location.search.includes('debug=true')) {
+  // DevTools detection loop (disabled on mobile/tablet devices and when ?debug=true is in URL)
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 1024);
+  if (!isMobileDevice && !window.location.search.includes('debug=true')) {
     const lockPage = () => {
       document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#fff;background:#000;font-size:24px;text-align:center;padding:20px;z-index:999999;position:fixed;inset:0;">Access Denied: Developer Tools Detected.</div>';
       document.body.style.overflow = 'hidden';
